@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+
 /* @property string $login
  * @property string $password
  * @property string $api_token
@@ -39,4 +40,19 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function posts()
+    {
+        return $this->hasMany('App\Post', 'author_id');
+    }
+
+    public function subscribes()
+    {
+        return $this->belongsToMany('App\User', 'user_subscribers', 'user_id');
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany('App\User', 'user_subscribers', 'subscribed_to_id');
+    }
 }

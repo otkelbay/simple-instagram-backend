@@ -15,11 +15,10 @@ class CreateUserSubscribersTable extends Migration
     {
         Schema::create('user_subscribers', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id');
-            $table->bigInteger('post_id');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('subscribed_to_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('CASCADE');
-            $table->foreign('post_id')->references('id')->on('posts')->onDelete('CASCADE');
-            $table->string('api_token')->nullable();
+            $table->foreign('subscribed_to_id')->references('id')->on('users')->onDelete('CASCADE');
             $table->timestamps();
         });
     }

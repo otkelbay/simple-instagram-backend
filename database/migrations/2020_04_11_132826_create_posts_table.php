@@ -17,8 +17,8 @@ class CreatePostsTable extends Migration
             $table->id();
             $table->text('post_text')->nullable();
             $table->string('photo_url');
-            $table->bigInteger('author_id');
-            $table->foreign('author_id')->references('id')->on('users')->onDelete('SET NULL');
+            $table->unsignedBigInteger('author_id');
+            $table->foreign('author_id')->references('id')->on('users')->onDelete('CASCADE');
             $table->timestamps();
         });
     }

@@ -26,6 +26,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/like', 'PostController@like');
     Route::post('/comment', 'PostController@comment');
     Route::post('/subscribe', 'UserController@subscribe');
+    Route::post('/user-posts', 'UserController@userPosts');
+    Route::post('/upload-post', 'PostController@uploadPost');
 });
 
 Route::group([], function () {
