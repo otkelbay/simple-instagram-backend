@@ -17,11 +17,11 @@ class DatabaseSeeder extends Seeder
     {
         $faker = Faker::create('ru_RU');
 
-        for ($j = 0; $j < 30; $j++) {
+        /*for ($j = 0; $j < 30; $j++) {
             $user = new User();
             $user->login = $faker->userName;
             $user->avatar = 'https://api.adorable.io/avatars/285/' . $j;
-            $user->password = \Illuminate\Support\Facades\Hash::make(\Illuminate\Support\Str::random());
+            $user->password = \Illuminate\Support\Facades\Hash::make('panfilov28');
             $user->about_me = $faker->realText(500);
             $user->api_token = \Illuminate\Support\Str::random(80);
             $user->save();
@@ -73,7 +73,7 @@ class DatabaseSeeder extends Seeder
                 );
                 $comment->save();
             }
-        }
+        }*/
 
     }
 }

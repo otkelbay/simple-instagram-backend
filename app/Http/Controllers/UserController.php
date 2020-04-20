@@ -85,8 +85,15 @@ class UserController extends Controller
                     'subscribed_to_id' => $request->get('subscribe_to')
                 ]);
         } elseif ($follow and !$request->get('follow')) {
-            $follow->delete();
+            DB::table('user_subscribers')
+                ->where('subscribed_to_id', $request->get('subscribe_to'))
+                ->where('user_id', $user->id)
+                ->delete();
         }
+
+        return response()->json([
+            'ok' => true
+        ]);
     }
 
     public function userPosts(Request $request)
@@ -98,8 +105,8 @@ class UserController extends Controller
         $userId = $request->get('user_id');
         $userId = $userId ? $userId : Auth::id();
 
-        $user = User::find($userId);
+        $user = User::with('posts','subscribes','followers')->find($userId);
 
-        return response()->json($user->posts);
+        return response()->json($user);
     }
 }

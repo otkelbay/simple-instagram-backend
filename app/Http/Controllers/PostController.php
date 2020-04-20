@@ -18,25 +18,25 @@ class PostController extends Controller
             'photo_content' => 'required',
             'photo_name' => 'required'
         ]);
-        $type = end(explode('.', $request->get('photo_name')));
-        $fileName = Str::random() . ".$type";
-        $data = $request->get('photo_content');
-        $filePath = public_path("handled_files") . '/' . $fileName;
-        $data = explode(',', $data);
-        $data = count($data) > 1 ? $data[1] : $data[0];
-        $data = base64_decode($data);
-        $fullPath = file_put_contents("$filePath", $data, FILE_APPEND | LOCK_EX)
-            ? config('app.url') . "/$filePath"
-            : false;
-        return $fullPath;
+
+        $fileUrl = Post::getFileUrl($request);
+        $post = new Post(
+            [
+                'photo_url' => $fileUrl,
+                'post_text' => $request->get('text'),
+                'author_id' => Auth::id()
+            ]
+        );
+        $post->save();
+        return response()->json($post);
     }
 
     public function getFeed()
     {
         /* @var $user User */
         $user = Auth::user();
-        $subscribersIds = $user->subscribes()->pluck('id');
-        $posts = Post::whereIn('author_id', $subscribersIds)->orderBy('id', 'DESC')->simplePaginate(20);
+        $subscribersIds = $user->subscribes()->pluck('user_subscribers.subscribed_to_id');
+        $posts = Post::whereIn('author_id', $subscribersIds)->orderBy('posts.id', 'DESC')->with('author:avatar,login,id')->simplePaginate(20);
         return response()->json($posts);
     }
 
@@ -60,8 +60,15 @@ class PostController extends Controller
                     'post_id' => $request->get('post_id')
                 ]);
         } elseif ($like and !$request->get('like')) {
-            $like->delete();
+            DB::table('user_post_likes')
+                ->where('post_id', $request->get('post_id'))
+                ->where('user_id', $user->id)
+                ->delete();
         }
+
+        return response()->json([
+            'ok' => true
+        ]);
     }
 
     public function comment(Request $request)
@@ -85,5 +92,13 @@ class PostController extends Controller
             $comment->reply_to = $request->get('reply_to');
         }
         $comment->save();
+
+        return response()->json(Comment::with('user')->find($comment->id));
+    }
+
+    public function getPost($id)
+    {
+        $post = Post::with('comments.user:avatar,login,id','author:avatar,login,id')->find($id);
+        return response()->json($post);
     }
 }

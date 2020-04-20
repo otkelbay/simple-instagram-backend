@@ -23,6 +23,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/get-suggested', 'UserController@getSuggested');
     Route::post('/feed', 'PostController@getFeed');
     Route::get('/me', 'UserController@getUser');
+    Route::get('/post/{id}', 'PostController@getPost');
     Route::post('/like', 'PostController@like');
     Route::post('/comment', 'PostController@comment');
     Route::post('/subscribe', 'UserController@subscribe');
