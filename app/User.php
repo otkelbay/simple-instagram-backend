@@ -5,6 +5,9 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 /* @property string $login
  * @property string $password
@@ -64,6 +67,20 @@ class User extends Authenticatable
     public function getFollowersCountAttribute()
     {
         return $this->followers()->count();
+    }
+
+    public static function isFollowing($userId)
+    {
+        if (Auth::check()) {
+           $follow = DB::table('user_subscribers')
+            ->where('subscribed_to_id', $userId)
+            ->where('user_id', Auth::id())
+            ->first();
+
+           return !!$follow;
+
+        }
+        return false;
     }
 
 

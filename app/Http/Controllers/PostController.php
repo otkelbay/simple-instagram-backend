@@ -36,7 +36,7 @@ class PostController extends Controller
         /* @var $user User */
         $user = Auth::user();
         $subscribersIds = $user->subscribes()->pluck('user_subscribers.subscribed_to_id');
-        $posts = Post::whereIn('author_id', $subscribersIds)->orderBy('posts.id', 'DESC')->with('author:avatar,login,id')->simplePaginate(20);
+        $posts = Post::whereIn('author_id', $subscribersIds)->with('author:avatar,login,id')->inRandomOrder("'".strval(rand(1,10000))."'")->simplePaginate(20);
         return response()->json($posts);
     }
 

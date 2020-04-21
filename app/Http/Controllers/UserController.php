@@ -48,6 +48,7 @@ class UserController extends Controller
         }
         $user = new User();
         $user->login = $request->get('login');
+        $user->avatar = 'https://api.adorable.io/avatars/285/' . rand(1,100000);
         $user->password = Hash::make($request->get('password'));
         $user->api_token = Str::random(80);
         $user->save();
@@ -106,6 +107,7 @@ class UserController extends Controller
         $userId = $userId ? $userId : Auth::id();
 
         $user = User::with('posts','subscribes','followers')->find($userId);
+        $user->following = User::isFollowing($userId);
 
         return response()->json($user);
     }
